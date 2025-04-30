@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  open-webui:
+
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    volumes:
+      - /docker/ai/open-webui:/app/backend/data
+    ports:
+      - 80:80
+    environment:
+      - 'OLLAMA_BASE_URL=XXX_TRUNCATED_XXX'
+      - 'WEBUI_URL=XXX_TRUNCATED_XXX'
+      - 'WEBUI_SECRET_KEY='
+      - 'PORT=20880'
+      - 'SCARF_NO_ANALYTICS=true'
+      - 'ANONYMIZED_TELEMETRY=false'
+      - 'DO_NOT_TRACK=true'
+      - 'ENABLE_WEBSOCKET_SUPPORT=true'
+      - 'ENABLE_OAUTH_SIGNUP=true'
+      - 'OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true'
+      - 'OAUTH_PROVIDER_NAME=sso-oauth-openwebui'
+      - 'OPENID_PROVIDER_URL=XXX_TRUNCATED_XXX'
+      - 'OAUTH_CLIENT_ID=XXX_TRUNCATED_XXX'
+      - 'OAUTH_CLIENT_SECRET=XXX_TRUNCATED_XXX'
+      - 'OAUTH_SCOPES=openid email profile'
+      - 'OPENID_REDIRECT_URI=XXX_TRUNCATED_XXX'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+    deploy:
+      resources:
+        limits:
+          cpus: "6"
+          memory: 4G
+        reservations:
+          memory: 512M
+    restart: unless-stopped
+    

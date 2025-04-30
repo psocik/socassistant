@@ -1,0 +1,172 @@
+{
+  "name": "PROD-CERT-BLACKLIST",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "ioc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        20
+      ],
+      "id": "01b78eca-8b84-48f9-bb32-4bc3b4c8e5ee",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "https://hole.cert.pl/domains/v2/domains_hosts.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -740,
+        -140
+      ],
+      "id": "e0cedae1-f10d-4de2-8f9a-52d5168c2918",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "df8c7b49-8dc8-4e62-b729-4a4f22a3ae3d",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "={{ $('When Executed by Another Workflow').item.json.ioc }}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -520,
+        20
+      ],
+      "id": "98db32e1-d793-4e20-91e9-53e19c87c3d7",
+      "name": "If",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "399a6f2a-4e10-48ab-8242-a2918bcd106d",
+              "name": "result",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ioc }} detected on CERT BLOCKLIST",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        -60
+      ],
+      "id": "d8bedba7-52ef-456e-8019-d5b3e53fcddf",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02659d20-0094-4a4d-a347-ce9165b42a2c",
+              "name": "result",
+              "value": "={{ $('When Executed by Another Workflow').item.json.ioc }} is not on CERT BLOCKLIST",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -300,
+        120
+      ],
+      "id": "1ba4504f-c4c9-474d-84ff-72ebb339b6ed",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a5bfd3c9-1994-4d1a-a8b6-767314e2a12d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a1d31b3a0fae4da1f8391c340f77ce9ca42d46c78b2f9a0fdb67865ed72d1c2"
+  },
+  "id": "ekT05LAGaUvsqBXS",
+  "tags": []
+}

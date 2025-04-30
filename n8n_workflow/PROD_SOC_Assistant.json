@@ -1,0 +1,498 @@
+{
+  "name": "PROD-SOC-Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "HI",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        -800
+      ],
+      "id": "e29b3f5d-e79f-4fb5-8b88-c9d33431eaab",
+      "name": "When chat message received",
+      "webhookId": "e5cb001c-6595-4ae7-955a-7991063679c1"
+    },
+    {
+      "parameters": {
+        "path": "0f74fe85-73ba-46d8-aeab-3404488a3aea",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        460,
+        -600
+      ],
+      "id": "f29473e0-b5bc-45c9-8a41-cbae8feafc80",
+      "name": "Webhook",
+      "webhookId": "0f74fe85-73ba-46d8-aeab-3404488a3aea"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        -800
+      ],
+      "id": "d0f48580-6f57-42f2-a49a-7fc8f5054fdf",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d190ebbb-f87f-454d-8681-9f065b903dea",
+              "name": "query",
+              "value": "={{ $json.query }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        -600
+      ],
+      "id": "417216fa-d524-4676-b55b-1216c3c283af",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Aggregate').item.json.query }}",
+        "options": {
+          "systemMessage": "{{ $json.output }}\nIf you get domain name, you must also check all IP addresses domain resolves to in every possible tools. return summary for each subdomain. you mus include all information from tools each detail must be in summary. be very technical and explain ports and CVE vulnerabilities."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1280,
+        -800
+      ],
+      "id": "d7a8622f-d5f5-4bb2-a623-153785c82bf7",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "name": "ip_info",
+        "description": "Call this tool to get a information about IP from IPINFO.",
+        "language": "python",
+        "pythonCode": "return '''Pla//Placeholder for code\n {\n  \"country\": \"PL\",\n  \"malicious\": True,\n  \"vpn\": True\n}'''"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1620,
+        -500
+      ],
+      "id": "927e9574-b42c-419e-93fe-64d550ecb280",
+      "name": "IPINFO"
+    },
+    {
+      "parameters": {
+        "name": "misp_info",
+        "description": "Call this tool to get a information about IP or domain name in knowledge base MISP.",
+        "language": "python",
+        "pythonCode": "return '''//Placeholder for code\n {\n  \"misp\": False\n}'''"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1740,
+        -500
+      ],
+      "id": "6da542f4-34a8-477a-b775-86e7fcc3a5ad",
+      "name": "MISP"
+    },
+    {
+      "parameters": {
+        "name": "domain_check_in_source",
+        "description": "Call this tool to get information about domain from domain1 tool.",
+        "jsCode": "// Example: convert the incoming query to uppercase and return it\nreturn \"no domain fount in resource\""
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        1500,
+        -500
+      ],
+      "id": "ad670a7c-6f99-4e45-9ab2-0e9cd40441e1",
+      "name": "Domain1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this tool to get information about IP from shodan.",
+        "url": "=https://api.shodan.io/shodan/host/{IP}",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "key",
+              "valueProvider": "fieldValue",
+              "value": "XXX_TRUNCATED_XXX"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "IP",
+              "description": "IP address extracted from user query",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        -500
+      ],
+      "id": "1f80f9d6-1ae8-4681-9074-548e1f9ff0af",
+      "name": "Shodan IP"
+    },
+    {
+      "parameters": {
+        "toolDescription": "\nmust Call this tool to get information about IP from shodan.",
+        "url": "=https://api.shodan.io/dns/domain/{domain}\n",
+        "sendQuery": true,
+        "parametersQuery": {
+          "values": [
+            {
+              "name": "key",
+              "valueProvider": "fieldValue",
+              "value": "XXX_TRUNCATED_XXX"
+            }
+          ]
+        },
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "domain",
+              "description": "=Domain name extracted from user query",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        -500
+      ],
+      "id": "3da1c428-565a-431d-8a5c-8f4b8b351140",
+      "name": "Shodan DOMAIN"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        900,
+        -480
+      ],
+      "id": "b5311392-4aeb-415e-9c2e-a51125bd93a3",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "S1sDOgvZUiem6jK0",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "CERTBlock",
+        "description": "call this tool to check domain name or ip adddress of being on CERT blocklist",
+        "workflowId": {
+          "__rl": true,
+          "value": "ekT05LAGaUvsqBXS",
+          "mode": "list",
+          "cachedResultName": "TEST-CERT-BLACKLIST"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ioc": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ioc', `domain or ip adddress`, 'string') }}"
+          },
+          "matchingColumns": [
+            "ioc"
+          ],
+          "schema": [
+            {
+              "id": "ioc",
+              "displayName": "ioc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1860,
+        -500
+      ],
+      "id": "3a3558ed-d850-483a-8a8c-674b53d08648",
+      "name": "CERT BLOCKLIST"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "81289bcf-c9af-4564-940e-e990a0087061",
+              "name": "query",
+              "value": "={{ $json.chatInput }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        -800
+      ],
+      "id": "fa8b2230-1471-44d4-aa75-516940635a94",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "query",
+              "renameField": true,
+              "outputFieldName": "query"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -800
+      ],
+      "id": "b197d389-a086-4e8a-884c-24c796f616d2",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1060,
+        -480
+      ],
+      "id": "10e015e7-5fd9-496d-be21-5076acd74943",
+      "name": "LiteLLM OpenAI gpt-4o-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "cddO4JxEg6n5sGHI",
+          "name": "LiteLLM"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IPINFO": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MISP": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Domain1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shodan IP": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shodan DOMAIN": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "CERT BLOCKLIST": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LiteLLM OpenAI gpt-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1f90bbf9-7615-431c-9536-d420e70c046d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a1d31b3a0fae4da1f8391c340f77ce9ca42d46c78b2f9a0fdb67865ed72d1c2"
+  },
+  "id": "FVneuLWudIlC5KBg",
+  "tags": []
+}

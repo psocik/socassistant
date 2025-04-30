@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    ports:
+      - "443:443"
+
+    environment:
+      - N8N_HOST=XXX_TRUNCATED_XXX
+      - N8N_PORT=443
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=XXX_TRUNCATED_XXX/
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true 
+      - N8N_DIAGNOSTICS_ENABLED=false
+    volumes:
+      - /docker/n8n:/home/node/.n8n
+    networks:
+      - n8n
+      
+networks:
+  n8n:
+    driver: bridge
