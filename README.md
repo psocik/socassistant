@@ -80,13 +80,14 @@ Scalable, secure LLM hosting using enterprise-grade models like GPT-4. Ensures d
 ## 🧠 How It Works
 
 1. **Enter IP/domain in OpenWebUI**
-2. **AI agent triggers a custom n8n workflow**
-3. **Connected tools perform analysis**:
+2. **custom n8n workflowis executed**
+3. **AI agent is executing suitable tools**
+4. **Connected tools perform analysis**:
    - 🔍 **Shodan** – Internet exposure
    - 🧠 **MISP** – Threat intelligence
    - 🧰 **More CTI tools** (extendable)
 
-4. **AI summarizes results**, correlates intelligence, and provides action-oriented insights
+5. **AI summarizes results**, correlates intelligence, and provides action-oriented insights
 
 ---
 
