@@ -117,7 +117,7 @@ Perform reconnaissance, assess external exposure, or track assets for security a
 
 ## 📐 Architecture Diagram
 
-> ![SOC Assistant Architecture](images/architecture.png)
+> ![SOC Assistant Architecture](images/architecture2.png)
 
 ## 📝 TODO List
 
