@@ -77,10 +77,34 @@ Scalable, secure LLM hosting using enterprise-grade models like GPT-4. Ensures d
 
 ---
 
+## 🛠️ AI Integration Tools in n8n 
+
+These custom tools integrate threat intelligence and cyber reconnaissance services into your n8n workflows, enabling automation and enrichment for security use cases.
+
+### 🔍 MISP Tool (python)
+**Description:**  
+Queries a [MISP (Malware Information Sharing Platform)](https://www.misp-project.org/) instance for Indicators of Compromise (IOCs) and provides extended and enhanced threat intelligence.  
+**Use Case:**  
+Enrich IOCs such as domains, IPs, file hashes with contextual threat data and sightings from MISP.
+ 
+### 🌐 IPInfo Tool (python)
+**Description:**  
+Connects to the [IPinfo.io](https://ipinfo.io/) API to retrieve detailed information about IP addresses, including geolocation, ASN, hostname, and abuse reports.  
+**Use Case:**  
+Identify malicious IP addresses, investigate traffic sources, or contextualize incidents.
+
+### 🛰️ Shodan Tool (web api request)
+**Description:**  
+Interfaces with the [Shodan](https://www.shodan.io/) search engine to retrieve data on open ports, running services, known vulnerabilities (CVEs), and other exposed metadata about internet-connected devices.  
+**Use Case:**  
+Perform reconnaissance, assess external exposure, or track assets for security assessments.
+
+---
+
 ## 🧠 How It Works
 
 1. **Enter IP/domain in OpenWebUI**
-2. **custom n8n workflowis executed**
+2. **Custom n8n workflow is executed**
 3. **AI agent is executing suitable tools**
 4. **Connected tools perform analysis**:
    - 🔍 **Shodan** – Internet exposure
